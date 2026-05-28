@@ -3,22 +3,22 @@ import { BasePage } from './BasePage';
 
 export class LoginPage extends BasePage {
     /**
-     * @selector #user-name
-     * @strategy id
+     * @selector placeholder="Username"
+     * @strategy getByPlaceholder
      * @verified 2024-01-25
      */
     public readonly usernameInput: Locator;
 
     /**
-     * @selector #password
-     * @strategy id
+     * @selector placeholder="Password"
+     * @strategy getByPlaceholder
      * @verified 2024-01-25
      */
     public readonly passwordInput: Locator;
 
     /**
-     * @selector #login-button
-     * @strategy id
+     * @selector name="Login"
+     * @strategy getByRole
      * @verified 2024-01-25
      */
     public readonly loginButton: Locator;
@@ -29,9 +29,9 @@ export class LoginPage extends BasePage {
      */
     constructor(page: Page) {
         super(page);
-        this.usernameInput = page.locator('#user-name');
-        this.passwordInput = page.locator('#password');
-        this.loginButton = page.locator('#login-button');
+        this.usernameInput = page.getByPlaceholder('Username');
+        this.passwordInput = page.getByPlaceholder('Password');
+        this.loginButton = page.getByRole('button', { name: 'Login' });
     }
 
     /**

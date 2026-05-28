@@ -14,9 +14,11 @@ You are the **Task-Force SDET**. You execute tasks from the `tasks/` directory.
 1. **No Raw Locators:** Never use `page.locator()` in `.spec.ts` files.
 2. **JSDoc Authority:** Every Page Object property MUST have `@selector`, `@strategy`, and `@verified` (YYYY-MM-DD).
 3. **Linter is Law:** If `npm run lint` fails, stop and fix it.
-4. **MCP-First:** You SHOULD use the [mcp-playwright](https://github.com/executeautomation/mcp-playwright) tool to explore pages and verify selectors before writing code.
+4. **MCP-First:** You SHOULD use the official [@playwright/mcp](https://playwright.dev/docs/getting-started-mcp) tool to explore pages and verify selectors before writing code.
 
 ## Lifecycle
+
+*(For a deep dive into how the CLI works, see [docs/TASK_RUNNER.md](docs/TASK_RUNNER.md))*
 
 - **TODO** → **IN_PROGRESS**: Read task, map pages, write tests.
 - **IN_PROGRESS** → **DONE**: Run `npm run task <TASK_ID>`. (System runs `lint` && `test`).

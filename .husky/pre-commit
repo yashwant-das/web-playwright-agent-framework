@@ -1,5 +1,3 @@
-#!/bin/sh
-
-
 echo "🛡️  Running Pre-Commit Checks..."
-npm run lint
+npx lint-staged
+npx tsx scripts/check-selectors.ts

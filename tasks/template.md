@@ -4,6 +4,7 @@ title: "Automate Login Page Critical Path"
 status: "TODO"
 owner: "AI"
 priority: "High"
+dependsOn: []
 ---
 
 <details>
@@ -11,7 +12,8 @@ priority: "High"
 
 ## YAML Frontmatter Fields
 
-- **status**: `REQUIRED` - Used by `run_task.ts` for workflow transitions (TODO → IN_PROGRESS → DONE → BLOCKED)
+- **status**: `REQUIRED` - Used by `scripts/task.ts` for workflow transitions (TODO → IN_PROGRESS → DONE → BLOCKED)
+- **dependsOn**: `OPTIONAL` - Array of task IDs (e.g. `["T-001"]`) that must be DONE before this task can be activated.
 - **id**: `OPTIONAL` - Redundant with filename, kept for potential future tooling
 - **title**: `OPTIONAL` - Redundant with markdown header, kept for metadata queries
 - **owner**: `OPTIONAL` - Not currently used by scripts, available for future dashboards

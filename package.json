@@ -7,20 +7,31 @@
     "lint:code": "eslint 'pages/**/*.ts' 'tests/**/*.ts'",
     "lint:md": "markdownlint '**/*.md' --ignore node_modules",
     "lint": "npm run lint:code && npm run lint:md",
-    "task": "ts-node scripts/run_task.ts",
-    "prepare": "husky install"
+    "task": "ts-node scripts/task.ts",
+    "mcp": "npx tsx mcp/server.ts",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "pages/**/*.ts": "tsx scripts/check-selectors.ts"
   },
   "devDependencies": {
+    "@clack/prompts": "^1.4.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@playwright/test": "^1.41.0",
     "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
+    "eslint": "^9.39.4",
     "eslint-plugin-jsdoc": "^48.0.0",
+    "eslint-plugin-playwright": "^2.10.4",
     "front-matter": "^4.0.2",
     "husky": "^9.0.0",
+    "jiti": "^2.7.0",
+    "lint-staged": "^17.0.5",
     "markdownlint-cli": "^0.47.0",
+    "picocolors": "^1.1.1",
+    "ts-morph": "^28.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "typescript-eslint": "^8.60.0",
+    "zod": "^4.4.3"
   }
 }

@@ -49,7 +49,7 @@ TODO -> IN_PROGRESS -> DONE
            BLOCKED
 ```
 
-The `npm run task` command reads those files, updates task status, runs verification for active work, and writes diagnostic output to `logs/last_run.log`.
+The `npm run task` command reads those files, updates task status, runs verification for active work, and writes diagnostic output to `logs/last_run.log`. (See [docs/TASK_RUNNER.md](docs/TASK_RUNNER.md) for full CLI documentation).
 
 ### Guardrails for AI-Written Tests
 
@@ -75,7 +75,7 @@ If verification passes, the task moves to `DONE`. If lint or tests fail, the tas
 
 ### MCP-First Exploration Protocol
 
-The framework expects agents to use `mcp-playwright` to inspect pages and verify selectors before implementation, especially for unknown or external pages. This is an operating rule defined in [AGENTS.md](AGENTS.md). The repository does not install or drive MCP automatically; it provides the protocol and enforcement context for agents that have the tool available.
+The framework expects agents to use the official `@playwright/mcp` to inspect pages and verify selectors before implementation, especially for unknown or external pages. This is an operating rule defined in [AGENTS.md](AGENTS.md). The repository does not install or drive MCP automatically; it provides the protocol and enforcement context for agents that have the tool available.
 
 ### Commit-Time Quality Gates
 
@@ -109,7 +109,7 @@ It is intentionally small. There is no dashboard, no CI pipeline definition, no 
 * Node.js 18 or newer.
 * Playwright browsers installed with `npx playwright install`.
 * An AI coding environment that can read the repo and follow [AGENTS.md](AGENTS.md).
-* Optional but recommended: [mcp-playwright](https://github.com/executeautomation/mcp-playwright) configured in your agentic IDE.
+* Optional but recommended: [Official Playwright MCP](https://playwright.dev/docs/getting-started-mcp) configured in your agentic IDE.
 
 ### Installation
 
@@ -183,7 +183,7 @@ Give the printed prompt to your AI assistant. The assistant should:
 
 * Read [AGENTS.md](AGENTS.md).
 * Read the task file in `tasks/`.
-* Map selectors, preferably with `mcp-playwright`.
+* Map selectors, preferably with `@playwright/mcp`.
 * Add or update Page Objects in `pages/`.
 * Add or update specs in `tests/`.
 * Avoid raw locators in specs.
@@ -211,13 +211,18 @@ The runner:
 ├── .husky/                    # Local git hooks
 │   ├── commit-msg             # Commit message validation
 │   └── pre-commit             # Lint before commit
+├── docs/                      # Documentation
+│   ├── ROADMAP.md             # Planned improvements tracker
+│   └── TASK_RUNNER.md         # Task CLI orchestration documentation
 ├── logs/                      # Runtime logs
 │   └── last_run.log           # Latest task execution output
+├── mcp/                       # MCP Server
+│   └── server.ts              # Custom MCP tools for task management
 ├── pages/                     # Page Objects
 │   ├── BasePage.ts            # Shared page helpers
 │   └── *.ts                   # Feature-specific page objects
 ├── scripts/                   # Task runner
-│   └── run_task.ts            # Lifecycle and verification engine
+│   └── task.ts                # Lifecycle and verification engine
 ├── tasks/                     # Markdown task files
 │   ├── template.md            # Task template
 │   └── T-*.md                 # Individual task files
@@ -272,7 +277,7 @@ These rules are defined in [AGENTS.md](AGENTS.md) and backed by linting where po
 1. **No raw locators in specs:** Do not use `page.locator()` in `.spec.ts` files.
 2. **Page Object selector documentation:** Page Object properties must document selectors with `@selector`, `@strategy`, and `@verified`.
 3. **Lint before completion:** `npm run lint` must pass before a task can be marked `DONE`.
-4. **MCP-first exploration:** Use `mcp-playwright` to explore pages and validate selectors when available.
+4. **MCP-first exploration:** Use `@playwright/mcp` to explore pages and validate selectors when available.
 5. **Failure diagnosis:** If verification fails, read `logs/last_run.log` before changing code.
 
 ---
@@ -287,6 +292,46 @@ These rules are defined in [AGENTS.md](AGENTS.md) and backed by linting where po
 | `npm test` | Run the Playwright test suite. |
 | `npm run lint:code` | Run ESLint on Page Objects and specs. |
 | `npm run lint:md` | Run markdownlint on Markdown files. |
+| `npm run mcp` | Start the custom task MCP server. |
+
+---
+
+## MCP Server Integration
+
+The framework includes a custom Model Context Protocol (MCP) server located in `mcp/server.ts`. This server exposes the task lifecycle directly to AI agents inside their IDE:
+
+| Tool | Purpose |
+| :--- | :--- |
+| `activateTask` | Validates dependencies and safely moves a task to `IN_PROGRESS`. |
+| `verifyTask` | Manually overrides a task to `DONE` (WARNING: This bypasses automated lint/test gates. Prefer `npm run task` instead). |
+| `getBlockedTasks` | Returns a list of tasks that cannot be started due to unmet dependencies. |
+
+*Note: For browser automation, we also recommend installing the official [@playwright/mcp](https://playwright.dev/docs/getting-started-mcp) server.*
+
+### Connecting to AI IDEs
+
+To connect this local task lifecycle MCP server to your AI assistant, use the following configurations. **Important:** Replace `/absolute/path/to/repo` with the actual path to this repository on your machine.
+
+#### Cursor
+Create a `.cursor/mcp.json` file in the root of your project:
+
+```json
+{
+  "mcpServers": {
+    "task-framework": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/repo/mcp/server.ts"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}
+```
+
+#### VSCode (Roo Code / Cline)
+Add the same JSON block above to your global `mcp_servers.json` configuration file.
 
 ---
 
@@ -294,7 +339,7 @@ These rules are defined in [AGENTS.md](AGENTS.md) and backed by linting where po
 
 The repository currently includes:
 
-* A working lifecycle runner in [scripts/run_task.ts](scripts/run_task.ts).
+* A working lifecycle runner in [scripts/task.ts](scripts/task.ts).
 * Agent instructions in [AGENTS.md](AGENTS.md).
 * One completed login navigation example.
 * A task backlog for inventory, cart, sorting, checkout, footer, logout, login-error, and external contact-form coverage.
