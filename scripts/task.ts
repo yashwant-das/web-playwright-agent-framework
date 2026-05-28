@@ -13,12 +13,12 @@ const theme = {
         if (s === 'BLOCKED') return pc.red(s);
         return pc.blue(s);
     },
-    taskId: (id: string) => pc.cyan(pc.bold(`[${id}]`)),
+    taskId: (id: string) => pc.bold(`[${id}]`),
     title: (text: string) => pc.bold(text),
-    step: (text: string) => pc.cyan(text),
+    step: (text: string) => pc.dim(text),
     success: (text: string) => pc.green(text),
     error: (text: string) => pc.red(text),
-    noteTitle: (text: string) => pc.magenta(pc.bold(text)),
+    noteTitle: (text: string) => pc.bold(text),
     noteWarning: (text: string) => pc.red(pc.bold(text)),
 };
 
@@ -83,69 +83,69 @@ async function processTask(task: Task & { file: string, content: string }) {
     const filePath = path.join(TASKS_DIR, task.file);
     const actualTaskId = task.id;
 
-    mkLog(`\n[${actualTaskId}] ACTIVATING TASK: ${task.title}`);
-    log.step(theme.step(`ACTIVATING TASK ${theme.taskId(actualTaskId)}: ${theme.title(task.title)}`));
+    mkLog(`\n[${actualTaskId}] Task selected: ${task.title}`);
+    log.step(`${theme.taskId(actualTaskId)} ${theme.title(task.title)}`);
 
     let s: ReturnType<typeof clackSpinner> | undefined;
 
     try {
         if (task.status === 'TODO') {
-            log.step(`Status is ${theme.status('TODO')}. Moving to ${theme.status('IN_PROGRESS')}...`);
+            log.step(`Status: ${theme.status('TODO')}. Moving task to ${theme.status('IN_PROGRESS')}.`);
             updateTaskStatus(filePath, task.content, 'IN_PROGRESS');
             
             note(
-                `Task ${actualTaskId} is IN_PROGRESS.\nUse your AI Assistant (via MCP) to read the task details and implement the requirements.`,
-                theme.noteTitle('Prompt your AI Assistant:')
+                `Task ${actualTaskId} is now IN_PROGRESS.\nAsk your AI assistant to read AGENTS.md and tasks/${task.file}, then implement the requirements.`,
+                theme.noteTitle('AI handoff')
             );
         }
         else if (task.status === 'IN_PROGRESS' || task.status === 'BLOCKED') {
-            log.step(`Status is ${theme.status(task.status)}. Running Verification...`);
+            log.step(`Status: ${theme.status(task.status)}. Running verification.`);
             
             s = clackSpinner();
-            s.start('Running Linter');
+            s.start('Running lint');
             await runCmd('npm run lint');
-            s.stop(theme.success('Lint Passed'));
+            s.stop(theme.success('Lint passed'));
 
             const testFileMatch = task.content.match(/- \*\*Test File:\*\* `(.*)`/);
             if (!testFileMatch) {
-                log.error(theme.error(`No Test File defined in task. Cannot verify.`));
+                log.error(theme.error('Task does not declare a test file. Cannot verify.'));
                 throw new Error("No Test File found");
             }
             const testFile = testFileMatch[1];
             
             s = clackSpinner();
-            s.start(`Running Test: ${testFile}`);
+            s.start(`Running Playwright test: ${testFile}`);
             await runCmd(`npm test ${testFile}`);
-            s.stop(theme.success('Verification Passed!'));
+            s.stop(theme.success('Test passed'));
 
-            log.success(theme.success(`Moving task to DONE.`));
+            log.success(theme.success('Verification passed. Marking task DONE.'));
             updateTaskStatus(filePath, task.content, 'DONE');
         }
         else if (task.status === 'DONE') {
-            log.step(`Status is ${theme.status('DONE')}. Re-verifying...`);
+            log.step(`Status: ${theme.status('DONE')}. Re-running verification.`);
             
             s = clackSpinner();
-            s.start('Running Linter');
+            s.start('Running lint');
             await runCmd('npm run lint');
-            s.stop(theme.success('Lint Passed'));
+            s.stop(theme.success('Lint passed'));
 
             const testFileMatch = task.content.match(/- \*\*Test File:\*\* `(.*)`/);
             const cmd = testFileMatch ? `npm test ${testFileMatch[1]}` : 'npm test';
             
             s = clackSpinner();
-            s.start(`Running Tests`);
+            s.start('Running tests');
             await runCmd(cmd);
-            s.stop(theme.success('Re-Verification Passed! Task remains DONE.'));
+            s.stop(theme.success('Verification passed. Task remains DONE.'));
         }
     } catch (e) {
         if (s) {
-            s.stop(theme.error('Process interrupted or failed.'));
+            s.stop(theme.error('Command failed.'));
         }
-        log.error(theme.error(`Verification Failed.`));
+        log.error(theme.error('Verification failed.'));
         updateTaskStatus(filePath, task.content, 'BLOCKED');
         note(
-            `Task ${actualTaskId} is BLOCKED.\nAsk your AI Assistant to read logs/last_run.log and fix the issues.`,
-            theme.noteTitle('Prompt your AI Assistant:')
+            `Task ${actualTaskId} is now BLOCKED.\nAsk your AI assistant to read logs/last_run.log and fix the issue.\nOnce fixed, retry: npm run task ${actualTaskId}`,
+            theme.noteTitle('Repair required')
         );
     }
 }
@@ -158,7 +158,7 @@ async function main() {
         if (argTask === 'next') {
             const next = getNextTask(tasks);
             if (!next) {
-                log.info("No eligible Pending tasks found (or dependencies blocked).");
+                log.info('No eligible tasks found. Resolve blocked work or add a TODO task.');
                 process.exit(0);
             }
             await processTask(next);
@@ -177,7 +177,7 @@ async function main() {
             if (unmetDeps.length > 0) {
                 log.error(theme.error(`Cannot activate ${target.id}.`));
                 note(
-                    `The following tasks must be marked as DONE first:\n${unmetDeps.map(d => `• ${d}`).join('\n')}`,
+                    `The following tasks must be marked as DONE first:\n${unmetDeps.map(d => `- ${d}`).join('\n')}`,
                     theme.noteWarning('Unmet Dependencies')
                 );
                 process.exit(1);
@@ -187,13 +187,13 @@ async function main() {
         }
     }
 
-    intro(pc.bold('Agentic Playwright Task Runner'));
+    intro(pc.bold('Agentic Playwright Task CLI'));
     const command = await select({
         message: 'What would you like to do?',
         options: [
-            { value: 'next',     label: 'Activate next available task' },
-            { value: 'verify',   label: 'Mark current task as verified (runs tests)' },
-            { value: 'status',   label: 'Show task board status' },
+            { value: 'next',     label: 'Activate or resume next task' },
+            { value: 'verify',   label: 'Verify current active task' },
+            { value: 'status',   label: 'Show task board' },
             { value: 'blocked',  label: 'Show blocked tasks' },
         ]
     });
@@ -201,18 +201,18 @@ async function main() {
     if (command === 'next' || command === 'verify') {
         const next = getNextTask(tasks);
         if (!next) {
-            log.info("No eligible tasks to activate.");
+            log.info('No eligible tasks found.');
         } else {
             await processTask(next);
         }
     } else if (command === 'status') {
-        log.info('Task Board Status:');
+        log.info('Task board');
         tasks.forEach(t => {
             log.message(`  ${theme.taskId(t.id)} ${t.title} (${theme.status(t.status)})`);
         });
     } else if (command === 'blocked') {
         const blocked = tasks.filter(t => t.status === 'BLOCKED');
-        if (blocked.length === 0) log.success('No blocked tasks!');
+        if (blocked.length === 0) log.success('No blocked tasks.');
         else {
             blocked.forEach(t => {
                 log.error(`[${t.id}] ${t.title} - Check logs/last_run.log`);
@@ -220,7 +220,7 @@ async function main() {
         }
     }
 
-    outro('Done.');
+    outro('Complete.');
 }
 
 main().catch(console.error);

@@ -18,7 +18,7 @@ You are the **Task-Force SDET**. You execute tasks from the `tasks/` directory.
 
 ## Lifecycle
 
-*(For a deep dive into how the CLI works, see [docs/TASK_RUNNER.md](docs/TASK_RUNNER.md))*
+*(For a deep dive into how the CLI works, see [docs/TASK_CLI.md](docs/TASK_CLI.md))*
 
 - **TODO** → **IN_PROGRESS**: Read task, map pages, write tests.
 - **IN_PROGRESS** → **DONE**: Run `npm run task <TASK_ID>`. (System runs `lint` && `test`).
@@ -30,7 +30,27 @@ Continuous feedback is stored in `logs/last_run.log`. When verification fails, y
 
 ## Completion Protocol
 
-When you finish a task, you MUST report back with this exact format:
+This section is a hard output contract for every agent.
+
+You MUST NOT claim completion unless all of the following are true:
+
+1. The requested Page Object and test changes are implemented.
+2. No `.spec.ts` file contains `page.locator()`.
+3. Page Object properties include `@selector`, `@strategy`, and `@verified` with a `YYYY-MM-DD` date.
+4. `npm run lint` has passed.
+5. The relevant task verification command has passed:
+
+   ```bash
+   npm run task <TASK_ID>
+   ```
+
+If any required command fails, do not use the completion format. Instead, report the task as blocked, summarize the failure, and say that `logs/last_run.log` must be used for diagnosis.
+
+### Mandatory Success Response
+
+When, and only when, the task is complete and verified, report back with this exact format.
+
+Do not rename headings. Do not remove lines. Do not replace the checklist with prose. Replace placeholders with the real task ID, Page Object, test file, and requirement.
 
 ```text
 Task <TASK_ID> Complete ✓
@@ -44,3 +64,27 @@ All acceptance criteria met.
 
 👉 Next Step: Run `npm run task <TASK_ID>`
 ```
+
+### Mandatory Blocked Response
+
+If lint, task verification, tests, selector validation, or required implementation work is not complete, use this format instead:
+
+```text
+Task <TASK_ID> Blocked
+Summary:
+- <What was attempted>
+- <What failed or remains incomplete>
+- <Relevant command that failed>
+
+Required next step:
+Read `logs/last_run.log`, fix the issue, and retry `npm run task <TASK_ID>`.
+```
+
+### Formatting Rules
+
+- The final response MUST start with either `Task <TASK_ID> Complete ✓` or `Task <TASK_ID> Blocked`.
+- The success response MUST include all five checklist lines shown above.
+- Do not claim `lint passed` unless `npm run lint` passed in the current task attempt.
+- Do not claim `tests passed` unless `npm run task <TASK_ID>` or the declared task test passed.
+- Do not say "done", "complete", or "all criteria met" outside the mandatory success format.
+- If the user asks for a summary before verification, state that the task is not yet verified.

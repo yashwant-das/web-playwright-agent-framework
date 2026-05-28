@@ -1,7 +1,7 @@
 ---
 id: "T-002"
 title: "Verify Inventory Page"
-status: "IN_PROGRESS"
+status: "BLOCKED"
 owner: "AI"
 priority: "Medium"
 ---
