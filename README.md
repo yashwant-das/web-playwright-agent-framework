@@ -130,12 +130,12 @@ npm test
 > [!IMPORTANT]
 > This step is critical. The framework relies on two MCP servers. Without them, your AI assistant cannot explore pages for selectors or manage the task lifecycle through the protocol. Complete this step before starting any task work.
 
-This repository uses two MCP servers, each with a distinct purpose:
+This framework relies on two MCP servers to function correctly. One is provided natively by this repository, and the other is an official external tool:
 
-| MCP Server | Purpose | Required? |
+| MCP Server | Source / Purpose | Required? |
 | :--- | :--- | :--- |
-| **Official Playwright MCP** | Lets AI agents inspect live pages, explore DOM structure, and verify selectors through a real browser. | **Yes — strongly recommended** |
-| **Task Framework MCP** | Exposes task lifecycle tools (`list_tasks`, `activate_task`, `verify_task`) so agents can manage tasks programmatically. | **Yes — for full workflow** |
+| **Official Playwright MCP** | **External (`@playwright/mcp`)** <br> Lets AI agents inspect live pages, explore DOM structure, and verify selectors through a real browser. | **Yes — strongly recommended** |
+| **Task Framework MCP** | **Native (`mcp/server.ts`)** <br> Exposes task lifecycle tools (`list_tasks`, `activate_task`, `verify_task`) so agents can manage tasks programmatically. | **Yes — for full workflow** |
 
 #### Option A: Ask Your AI Assistant to Set It Up
 
@@ -196,7 +196,7 @@ The task framework MCP server exposes these tools to your AI assistant:
 | `list_tasks` | Lists all tasks with status and dependency info. Accepts an optional status filter. |
 | `activate_task` | Moves a dependency-ready `TODO` task to `IN_PROGRESS`. Enforces dependency checks. |
 | `verify_task` | Runs automated quality gates (`npm run lint` + Playwright tests) and marks the task `DONE` on success, or `BLOCKED` on failure. Logs full output to `logs/last_run.log`. |
-| `get_blocked_tasks` | Lists tasks blocked by unmet dependencies. |
+| `get_unmet_dependencies` | Lists tasks that cannot be activated because they are waiting on unmet dependencies. |
 
 > [!NOTE]
 > `verify_task` enforces the same strict quality gates as `npm run task <TASK_ID>`: ESLint linting and Playwright test execution. Both the MCP server and the CLI runner are functionally equivalent for verification.

@@ -203,11 +203,8 @@ server.tool(
             'IN_PROGRESS',
         );
 
-            return textResponse(
-                [
-                    'Copy and paste this prompt to your AI assistant:',
-                    `"Task ${taskId} is now IN_PROGRESS. Read AGENTS.md then tasks/${target.file}, implement, and call verify_task."`
-            ].join('\n'),
+        return textResponse(
+            `Task ${taskId} is now IN_PROGRESS. Please read AGENTS.md, then read tasks/${target.file}, implement the requirements, and finally call verify_task.`
         );
     },
 );
@@ -242,6 +239,7 @@ server.tool(
 
         // Clear the log file for this verification run
         logToFile(`\n${'='.repeat(60)}\n[${taskId}] MCP verification started at ${new Date().toISOString()}\n${'='.repeat(60)}`);
+        fs.writeFileSync(LOG_FILE, `--- Verification Run Started for ${taskId} ---\n`);
 
         try {
             // ── Gate 1: Lint ──────────────────────────────────────────
@@ -307,9 +305,8 @@ server.tool(
                 [
                     `Error: ${message}`,
                     '',
-                    'Copy and paste this prompt to your AI assistant:',
-                    `"Task ${taskId} is now BLOCKED. Verification failed. Please read logs/last_run.log for full diagnostic output and fix the failing code or selectors. Once fixed, call verify_task again with taskId ${taskId}."`,
-                ].join('\n'),
+                    `Task ${taskId} is now BLOCKED. Verification failed. Please read logs/last_run.log for full diagnostic output and fix the failing code or selectors. Once fixed, call verify_task again with taskId ${taskId}.`
+                ].join('\n')
             );
         }
     },
@@ -366,15 +363,15 @@ server.tool(
 );
 
 // ---------------------------------------------------------------------------
-// Tool: get_blocked_tasks (kept for backward compatibility)
+// Tool: get_unmet_dependencies
 // ---------------------------------------------------------------------------
 
 server.tool(
-    'get_blocked_tasks',
-    'List tasks that are blocked due to unmet dependencies. A task is blocked when one or more tasks in its dependsOn list are not yet DONE.',
+    'get_unmet_dependencies',
+    'List tasks that cannot be activated because they are waiting on unmet dependencies. A task is in this list when one or more tasks in its dependsOn list are not yet DONE.',
     {},
     async () => {
-        log('get_blocked_tasks called');
+        log('get_unmet_dependencies called');
 
         const tasks = getAllTasks();
         const done = new Set(

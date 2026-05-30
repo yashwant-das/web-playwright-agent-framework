@@ -114,6 +114,8 @@ async function processTask(task: Task & { file: string, content: string }) {
         else if (task.status === 'IN_PROGRESS' || task.status === 'BLOCKED') {
             log.step(`Status: ${theme.status(task.status)}. Running verification.`);
             
+            fs.writeFileSync(LOG_FILE, `--- Verification Run Started for ${actualTaskId} ---\n`);
+
             s = clackSpinner();
             s.start('Running lint');
             await runCmd('npm run lint');
@@ -137,6 +139,8 @@ async function processTask(task: Task & { file: string, content: string }) {
         else if (task.status === 'DONE') {
             log.step(`Status: ${theme.status('DONE')}. Re-running verification.`);
             
+            fs.writeFileSync(LOG_FILE, `--- Verification Run Started for ${actualTaskId} ---\n`);
+
             s = clackSpinner();
             s.start('Running lint');
             await runCmd('npm run lint');

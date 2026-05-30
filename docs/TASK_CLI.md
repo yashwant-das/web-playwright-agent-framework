@@ -96,11 +96,13 @@ For verification, the task body should include a context line for the test file:
 
 ## Task Selection Order
 
-`npm run task next` selects work in this order:
+`npm run task next` selects work in this order, evaluated alphabetically by filename:
 
-1. First `IN_PROGRESS` task.
-2. First `BLOCKED` task.
-3. First `TODO` task whose dependencies are complete.
+1. Existing `IN_PROGRESS` task.
+2. Existing `BLOCKED` task.
+3. Next dependency-ready `TODO` task.
+
+*Note: YAML frontmatter fields like `priority` are ignored by the runner.*
 
 This order keeps unfinished work ahead of new work.
 
@@ -176,6 +178,8 @@ The log includes:
 
 > [!CAUTION]
 > When a task becomes `BLOCKED`, read `logs/last_run.log` before changing code. The terminal intentionally shows a short summary; the log has the useful details.
+>
+> The runner overwrites `logs/last_run.log` on every verification run. Agents can safely read the entire file to diagnose the immediate failure without parsing historical runs.
 
 ## Blocked Task Repair Flow
 
@@ -210,6 +214,9 @@ The prompt contains the exact context (task ID and current state) the AI needs. 
 - [../AGENTS.md](../AGENTS.md) (the AI will read the MCP pre-flight check before proceeding),
 - `logs/last_run.log` when blocked.
 
+> [!NOTE]
+> This manual copy-pasting applies to the CLI runner. The MCP tools communicate directly with the AI and provide context without requiring human intervention.
+
 ## MCP Relationship
 
 The repository includes two MCP servers, each serving a distinct purpose.
@@ -230,7 +237,7 @@ The custom task framework MCP server in `mcp/server.ts` exposes task lifecycle t
 | `list_tasks` | Lists all tasks with status and dependency info. Accepts an optional status filter. |
 | `activate_task` | Moves a dependency-ready `TODO` task to `IN_PROGRESS`. Enforces dependency checks. |
 | `verify_task` | Runs automated quality gates (`npm run lint` + Playwright tests) and marks the task `DONE` on success, or `BLOCKED` on failure. Logs full output to `logs/last_run.log`. |
-| `get_blocked_tasks` | Lists tasks blocked by unmet dependencies (kept for backward compatibility). |
+| `get_unmet_dependencies` | Lists tasks that cannot be activated because they are waiting on unmet dependencies. |
 
 > [!NOTE]
 > `verify_task` enforces the same strict quality gates as `npm run task <TASK_ID>`: ESLint linting and Playwright test execution. Both the MCP server and the CLI runner are functionally equivalent for verification.
