@@ -50,7 +50,7 @@ This framework follows the **Smart Playwright Protocol (SPP) v2.0**:
 
 ## Task Workflow
 
-Follow the SPP lifecycle: **Understand → Explore → Plan → Implement → Verify → Recover**.
+Follow the SPP lifecycle: **Select → Understand → Explore → Plan → Implement → Verify → Recover**.
 
 1. **Understand**: Fill out the `Understanding` section in the task file before coding.
 2. **Explore**: Use Playwright MCP to verify selectors live in the browser.
@@ -72,4 +72,5 @@ Use `npm run task create` or copy `tasks/template.md`. New tasks include:
 - `README.md` — Onboarding and quick start.
 - `docs/PROTOCOL.md` — Architectural source of truth.
 - `docs/CLI.md` — Technical command reference.
+- `docs/ROADMAP.md` — Future enhancements and improvements.
 - `AGENTS.md` — Lightweight agent instructions.

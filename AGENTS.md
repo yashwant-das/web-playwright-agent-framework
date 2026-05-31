@@ -21,7 +21,7 @@ Before starting any work:
 
 ## Workflow Guidance
 
-You MUST strictly adhere to the lifecycle: **Understand → Explore → Plan → Implement → Verify → Recover**.
+You MUST strictly adhere to the lifecycle: **Select → Understand → Explore → Plan → Implement → Verify → Recover**.
 
 - **Understand:** Do not begin implementation until the "Understanding" section of the task is complete.
 - **Explore:** Use Playwright MCP (if available) or manual exploration to verify selectors live in the browser.

@@ -14,6 +14,8 @@ AI-assisted Playwright automation using a structured, protocol-driven workflow. 
 The framework enforces a single, disciplined workflow for all automation tasks:
 
 ```text
+Select
+    ↓
 Understand
     ↓
 Explore
@@ -86,4 +88,5 @@ npm run task T-###
 | :--- | :--- |
 | [docs/PROTOCOL.md](docs/PROTOCOL.md) | **Architectural source of truth**: workflow, states, and rules. |
 | [docs/CLI.md](docs/CLI.md) | **Command reference**: tools, menu, board, and troubleshooting. |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | Future enhancements and planned improvements. |
 | [AGENTS.md](AGENTS.md) | Lightweight instructions for AI assistants. |

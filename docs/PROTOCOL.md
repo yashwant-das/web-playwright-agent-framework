@@ -33,7 +33,7 @@ Everything else exists to support the protocol.
 The framework is built around a single workflow:
 
 ```text
-Understand     ↓ Explore     ↓ Plan     ↓ Implement     ↓ Verify     ↓ Recover 
+Select ↓ Understand ↓ Explore ↓ Plan ↓ Implement ↓ Verify ↓ Recover 
 ```
 
 This mirrors how experienced SDETs approach automation work.
@@ -123,13 +123,13 @@ A task is never considered complete without successful verification.
 
 #### 5. Browser Exploration Layer
 
-Playwright MCP is the **recommended** mechanism for:
+Playwright MCP is the **recommended** mechanism for browser exploration and selector validation. The protocol requires validation against reality, not a specific tool.
 
-- DOM inspection
-- Selector validation
-- Browser exploration
+---
 
-The protocol requires validation against reality, not a specific tool. Exploration can be performed manually or via other browser inspection tools.
+#### 6. Lifecycle Management Layer (Optional)
+
+The **Task Framework MCP** (located in `mcp/server.ts`) is an **optional and experimental** component. It provides tools for programmatic task activation and verification within AI-assisted IDEs. Most users will interact directly with task files and the CLI.
 
 ---
 
@@ -225,37 +225,14 @@ Create or modify:
 
 Requirements:
 
-- Page Objects own selectors
-- Tests focus on behavior
-- Tests remain readable
+- **Page Objects**: Own all selectors and user actions.
+- **Tests**: Focus on behavior and business outcomes.
+- **AAA Structure**: Tests should follow Arrange → Act → Assert.
+- **Readable**: Code remains maintainable and reviewable.
 
 ---
 
-### Phase 6 — Design Tests
-
-Tests follow AAA.
-
-#### Arrange
-
-Prepare:
-
-- Data
-- Navigation
-- State
-
-#### Act
-
-Perform the user action.
-
-#### Assert
-
-Validate business behavior.
-
-Assertions should validate outcomes rather than merely element visibility.
-
----
-
-### Phase 7 — Verify
+### Phase 6 — Verify
 
 Execute verification.
 
@@ -286,7 +263,7 @@ IN_PROGRESS → BLOCKED
 
 ---
 
-### Phase 8 — Recover
+### Phase 7 — Recover
 
 When verification fails:
 
@@ -323,11 +300,15 @@ Task cannot continue or verification failed.
 
 A block reason should be recorded.
 
-Supported reasons:
+#### Block Reason Definitions
 
-```text
-dependency requirement selector verification environment 
-```
+| Block Reason | Meaning |
+|---|---|
+| `dependency` | Waiting on another task to be completed. |
+| `requirement` | Missing clarification or business requirement. |
+| `selector` | UI locator issue preventing progress. |
+| `verification` | Linting or test verification failure. |
+| `environment` | Tooling, infrastructure, browser, or setup issue. |
 
 Example:
 
@@ -355,7 +336,6 @@ Standard task format:
 id: T-011
 title: Verify Checkout Tax
 status: TODO
-blockReason: verification
 dependsOn: []
 ---
 
@@ -443,13 +423,7 @@ test.only(...) describe.only(...)
 
 #### No Committed Skipped Tests
 
-Disallow:
-
-```typescript
-test.skip(...) 
-```
-
-unless intentionally documented.
+Skipped tests generate warnings and should be documented when intentionally committed.
 
 ---
 
@@ -551,10 +525,10 @@ The repository enforces a structured commit message format to ensure history rem
 
 ## Documentation Structure
 
-The framework maintains four primary documents.
+The framework maintains five primary documents.
 
 ```text
-README.md PROTOCOL.md CLI.md AGENTS.md 
+README.md PROTOCOL.md CLI.md ROADMAP.md AGENTS.md 
 ```
 
 Purpose:
@@ -563,6 +537,7 @@ README.md
 
 - onboarding
 - quick start
+- installation
 
 PROTOCOL.md
 
@@ -570,18 +545,23 @@ PROTOCOL.md
 - workflow
 - states
 - rules
+- quality gates
 
 CLI.md
 
 - commands
 - troubleshooting
-- internals
+- operational behavior
+
+ROADMAP.md
+
+- future enhancements
+- planned improvements
 
 AGENTS.md
 
-- agent instructions
-- completion protocol
-- MCP check
+- lightweight instructions for AI assistants
+- references protocol
 
 ---
 

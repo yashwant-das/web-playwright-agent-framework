@@ -92,14 +92,36 @@ The log includes stdout, stderr, lint failures, and Playwright failures. **Alway
 
 ## Configure MCP Servers
 
-The framework supports two MCP servers that can be configured in your AI assistant's environment (e.g., Cursor, Claude Desktop, Antigravity IDE).
+The framework supports MCP servers to improve the AI assistant experience.
 
-- **Official Playwright MCP**: (Recommended) For browser exploration.
-- **Task Framework MCP**: (Optional/Experimental) For lifecycle management.
+### Official Playwright MCP (Recommended)
+
+Used for browser exploration and selector validation.
+
+```json
+"playwright": {
+  "command": "npx",
+  "args": ["-y", "@playwright/mcp@latest"]
+}
+```
+
+### Task Framework MCP (Optional / Experimental)
+
+Provides tools for programmatic task lifecycle management.
+
+```json
+"task-framework": {
+  "command": "npx",
+  "args": ["tsx", "/absolute/path/to/repo/mcp/server.ts"],
+  "env": {
+    "NODE_OPTIONS": "--disable-warning=DEP0205"
+  }
+}
+```
 
 ### Automated Setup Prompt
 
-If you want the AI assistant to configure both MCP servers for you automatically, copy and paste the following prompt into your AI assistant's chat window:
+If you want the AI assistant to configure the MCP servers for you automatically, copy and paste the following prompt into your AI assistant's chat window:
 
 ```text
 Please register the following MCP servers in my IDE's MCP configuration file:
@@ -169,6 +191,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":
 | :--- | :--- |
 | [../README.md](../README.md) | Onboarding and quick start. |
 | [PROTOCOL.md](PROTOCOL.md) | **Architectural source of truth**: workflow, states, and rules. |
+| [ROADMAP.md](ROADMAP.md) | Future enhancements and planned improvements. |
 | [../AGENTS.md](../AGENTS.md) | Lightweight instructions for AI assistants. |
 | [../tasks/template.md](../tasks/template.md) | Template for new tasks. |
 | [../scripts/task.ts](../scripts/task.ts) | Task runner implementation. |
