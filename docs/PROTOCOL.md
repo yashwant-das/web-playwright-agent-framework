@@ -504,7 +504,7 @@ Future enhancements:
 The framework maintains five primary documents.
 
 ```text
-README.md PROTOCOL.md CLI.md ROADMAP.md AGENTS.md 
+README.md PROTOCOL.md CLI.md AGENTS.md 
 
 Purpose:
 
@@ -525,11 +525,6 @@ CLI.md
 - commands
 - troubleshooting
 - internals
-
-ROADMAP.md
-
-- future enhancements
-- implementation status
 
 AGENTS.md
 
