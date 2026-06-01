@@ -7,21 +7,25 @@ SPP prioritizes simplicity, verification-first development, and practical automa
 Purpose: Improve onboarding, adoption, and automation maturity without changing protocol architecture.
 
 ### GitHub Actions Verification Workflow
+
 - **Priority:** High
 - **Goal:** Provide a minimal GitHub Actions workflow that executes `npm install`, `npm run lint`, and `npm test` on pull requests and pushes.
 - **Notes:** Keep implementation lightweight and maintain SPP simplicity.
 
 ### Environment Configuration Support
+
 - **Priority:** High
 - **Goal:** Introduce environment-based configuration (e.g., `BASE_URL`).
 - **Deliverables:** `.env.example` and README guidance to improve adoption and onboarding.
 
 ### Node Runtime Declaration
+
 - **Priority:** Medium
 - **Goal:** Declare supported Node.js versions (e.g., `node >=18`).
 - **Purpose:** Reduce onboarding friction.
 
 ### Dependency Refresh
+
 - **Priority:** Medium
 - **Goal:** Review and upgrade Playwright, Clipboardy, and supporting tooling only when justified.
 - **Notes:** Avoid dependency churn and preserve framework stability.
@@ -29,16 +33,19 @@ Purpose: Improve onboarding, adoption, and automation maturity without changing 
 ## Backlog
 
 ### Task Frontmatter Validation
+
 - **Priority:** Medium
 - **Goal:** Validate required task metadata before activation.
 - **Why it matters:** Prevent confusing task activation behavior due to invalid YAML or missing required fields.
 
 ### Configurable Quality Gates
+
 - **Priority:** Low
 - **Goal:** Allow teams to enable or disable selected verification gates.
 - **Notes:** Maintain current defaults.
 
 ### Priority-Aware Task Selection
+
 - **Priority:** Low
 - **Goal:** Allow optional priority-based task ordering.
 - **Notes:** SPP should continue to prefer simple next-task execution by default.

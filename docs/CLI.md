@@ -172,7 +172,6 @@ Add both servers to your IDE's MCP configuration file:
 }
 ```
 
-
 Replace `/absolute/path/to/repo/` with the actual path to your cloned repository.
 
 ## Troubleshooting
