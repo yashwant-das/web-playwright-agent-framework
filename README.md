@@ -44,12 +44,22 @@ npm install
 npx playwright install
 ```
 
-### 2. Configure MCP Servers (Recommended)
+### 2. Environment Configuration
+
+Copy the example environment file and update it with your application's settings:
+
+```bash
+cp .env.example .env
+```
+
+The `BASE_URL` in `.env` will be used as the target for all tests.
+
+### 3. Configure MCP Servers (Recommended)
 
 This framework supports MCP servers to let AI agents explore the browser and manage tasks. While not mandatory, they significantly improve the AI implementation experience.
 **See [docs/CLI.md](docs/CLI.md#configure-mcp-servers) for setup instructions.**
 
-### 3. Create Your First Task
+### 4. Create Your First Task
 
 Launch the interactive wizard to generate a new task file:
 
@@ -57,7 +67,7 @@ Launch the interactive wizard to generate a new task file:
 npm run task create
 ```
 
-### 4. Activate the Task
+### 5. Activate the Task
 
 Select and move the task to `IN_PROGRESS`. This automatically copies an AI handoff prompt to your clipboard:
 
@@ -65,7 +75,7 @@ Select and move the task to `IN_PROGRESS`. This automatically copies an AI hando
 npm run task next
 ```
 
-### 5. Hand Off to AI
+### 6. Hand Off to AI
 
 Paste the copied prompt into your AI assistant. The assistant will:
 
@@ -73,7 +83,7 @@ Paste the copied prompt into your AI assistant. The assistant will:
 - Follow the SPP workflow.
 - Implement Page Objects and tests.
 
-### 6. Verify Completion
+### 7. Verify Completion
 
 Once the AI finishes, run the verification gate:
 
