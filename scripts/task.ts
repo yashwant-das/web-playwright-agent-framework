@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import fm from 'front-matter';
-import { intro, outro, select, log, spinner as clackSpinner, note, group, text, cancel } from '@clack/prompts';
+import { intro, outro, select, log, spinner as clackSpinner, note, group, text, cancel, isCancel } from '@clack/prompts';
 import { Task } from '../types/task';
 import { exec } from 'child_process';
 import pc from 'picocolors';
@@ -22,6 +22,11 @@ const theme = {
     noteTitle: (text: string) => pc.bold(text),
     noteWarning: (text: string) => pc.red(pc.bold(text)),
 };
+
+function handleCancel() {
+    outro('Cancelled.');
+    process.exit(0);
+}
 
 const TASKS_DIR = path.join(__dirname, '../tasks');
 const LOG_DIR = path.join(process.cwd(), 'logs');
@@ -227,8 +232,7 @@ async function createTask() {
         },
         {
             onCancel: () => {
-                cancel('Task creation cancelled.');
-                process.exit(0);
+                handleCancel();
             }
         }
     );
@@ -378,6 +382,10 @@ async function main() {
         ]
     });
 
+    if (isCancel(command)) {
+        handleCancel();
+    }
+
     if (command === 'create') {
         await createTask();
     } else if (command === 'next') {
@@ -400,7 +408,7 @@ async function main() {
         showBlockedTasks(tasks);
     }
 
-    outro('Complete.');
+    outro('Done.');
 }
 
 main().catch(console.error);
