@@ -1,7 +1,7 @@
 ---
 id: "T-004"
 title: "Verify Logout Flow"
-status: "TODO"
+status: "BLOCKED"
 dependsOn: ["T-001"]
 ---
 

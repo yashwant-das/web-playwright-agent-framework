@@ -76,17 +76,24 @@ function getAllTasks(): (Task & { file: string, content: string })[] {
         try {
             const content = fs.readFileSync(filePath, 'utf8');
             const parsed = fm<Task>(content);
+            const attrs = parsed.attributes;
+
+            // Simple validation: Ensure id and title exist
+            if (!attrs.id || !attrs.title) {
+                console.warn(pc.yellow(`\n[Warning] Task ${f} is missing required metadata (id or title). Skipping.`));
+                continue;
+            }
+
             tasks.push({
-                ...parsed.attributes,
-                id: f.split('_')[0],
+                ...attrs,
                 file: f,
                 content
             });
         } catch (err: unknown) {
             const errorMsg = err instanceof Error ? err.message : String(err);
-            console.error(pc.red(`\n[Error] Failed to parse front-matter in ${pc.bold(f)}: ${errorMsg}`));
-            console.error(pc.yellow(`Please check that the YAML syntax is correct in tasks/${f}.\n`));
-            process.exit(1);
+            console.warn(pc.yellow(`\n[Warning] Failed to parse front-matter in ${pc.bold(f)}: ${errorMsg}`));
+            console.warn(pc.dim(`Please check that the YAML syntax is correct in tasks/${f}. Continuing...\n`));
+            continue;
         }
     }
     return tasks;
@@ -101,14 +108,17 @@ function getAllTasks(): (Task & { file: string, content: string })[] {
  * @returns The next Task to process, or null if none are eligible.
  */
 function getNextTask(tasks: (Task & { file: string, content: string })[]) {
-    const inProgress = tasks.find(t => t.status === 'IN_PROGRESS');
+    // Only consider tasks with valid statuses for selection
+    const eligibleTasks = tasks.filter(t => ['TODO', 'IN_PROGRESS', 'BLOCKED'].includes(t.status));
+
+    const inProgress = eligibleTasks.find(t => t.status === 'IN_PROGRESS');
     if (inProgress) return inProgress;
 
-    const blocked = tasks.find(t => t.status === 'BLOCKED');
+    const blocked = eligibleTasks.find(t => t.status === 'BLOCKED');
     if (blocked) return blocked;
 
     const done = new Set(tasks.filter(t => t.status === 'DONE').map(t => t.id));
-    return tasks
+    return eligibleTasks
       .filter(t => t.status === 'TODO')
       .filter(t => (t.dependsOn ?? []).every(dep => done.has(dep)))
       .at(0) ?? null;
@@ -164,7 +174,7 @@ async function processTask(task: Task & { file: string, content: string }) {
             const copied = copyToClipboard(prompt);
 
             note(
-                `Copy and paste this prompt to your AI assistant:${copied ? '\n(Already copied to clipboard ✓)' : ''}\n\n"${prompt}"`,
+                `Copy and paste this prompt to your AI assistant:\n${copied ? theme.success('(Already copied to clipboard ✓)') : theme.error('(Clipboard unavailable. Prompt displayed below.)')}\n\n"${prompt}"`,
                 theme.noteTitle('AI handoff')
             );
             log.info(`${pc.blue('Next:')} Paste the prompt into your AI assistant.`);
@@ -229,7 +239,7 @@ async function processTask(task: Task & { file: string, content: string }) {
         const copied = copyToClipboard(repairPrompt);
 
         note(
-            `Copy and paste this prompt to your AI assistant:${copied ? '\n(Already copied to clipboard ✓)' : ''}\n\n"${repairPrompt}"`,
+            `Copy and paste this prompt to your AI assistant:\n${copied ? theme.success('(Already copied to clipboard ✓)') : theme.error('(Clipboard unavailable. Prompt displayed below.)')}\n\n"${repairPrompt}"`,
             theme.noteTitle('Repair required')
         );
         log.info(`${pc.blue('Next:')} Paste the repair prompt into your AI assistant.`);

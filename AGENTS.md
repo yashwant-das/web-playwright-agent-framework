@@ -23,7 +23,7 @@ Before starting any work:
 
 You MUST strictly adhere to the lifecycle: **Select → Understand → Explore → Plan → Implement → Verify → Recover**.
 
-- **Understand:** Do not begin implementation until the "Understanding" section of the task is complete.
+- **Understand:** Fill out the "Understanding" section of the task file. You MUST complete this section before implementation begins. Note: User approval of the Understanding section is NOT required unless explicitly requested in the task or by the user.
 - **Explore:** Use Playwright MCP (if available) or manual exploration to verify selectors live in the browser.
 - **Implement:** Follow repository coding standards (Page Objects, no raw locators).
 - **Verify:** Run `npm run task <TASK_ID>` to verify your work.

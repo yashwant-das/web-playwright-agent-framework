@@ -10,16 +10,16 @@ if echo "$first_line" | grep -qE "^Merge"; then
 fi
 
 # Regex check
-# Types: feat, fix, refactor, test, docs, chore, build, arch, heal
+# Types: feat, fix, refactor, test, docs, chore, build, arch, heal, map
 # Scope: optional, lowercase alphanumeric + dashes
-pattern="^(feat|fix|refactor|test|docs|chore|build|arch|heal)(\([a-z0-9-]+\))?: .+$"
+pattern="^(feat|fix|refactor|test|docs|chore|build|arch|heal|map)(\([a-z0-9-]+\))?: .+$"
 
 if ! echo "$first_line" | grep -qE "$pattern"; then
   echo ""
   echo "Invalid commit message: $first_line"
   echo ""
   echo "Expected: <type>(<optional-scope>): <subject>"
-  echo "Types: feat, fix, refactor, test, docs, chore, build, arch, heal"
+  echo "Types: feat, fix, refactor, test, docs, chore, build, arch, heal, map"
   echo "Scopes: (optional) cli, protocol, tasks, deps, selectors, login, products, cart, checkout"
   echo ""
   echo "Examples:"

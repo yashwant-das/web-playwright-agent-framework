@@ -4,7 +4,7 @@
 # 
 # <footer>
 # 
-# Types: feat, fix, heal, map, arch, refactor, test, docs, chore
-# Scopes: (Optional) login, products, cart, checkout, pages, tests, config, ci
+# Types: feat, fix, refactor, test, docs, chore, build, arch, heal, map
+# Scopes: (Optional) cli, protocol, tasks, deps, selectors, login, products, cart, checkout
 # 
 # See AGENTS.md for full guide

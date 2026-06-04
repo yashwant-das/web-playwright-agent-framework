@@ -30,6 +30,6 @@ Risk: External site changes could break our selectors.
 
 ## Acceptance Criteria
 
-- [ ] Use `@playwright/mcp` to map the page.
-- [ ] Upload a file during contact form submission.
-- [ ] Verify success message `Success! Your details have been submitted successfully.`
+- [x] Use `@playwright/mcp` to map the page.
+- [x] Upload a file during contact form submission.
+- [x] Verify success message `Success! Your details have been submitted successfully.`

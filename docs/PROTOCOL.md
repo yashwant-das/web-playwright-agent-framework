@@ -167,7 +167,7 @@ Requirements:
 
 ### Phase 2 — Understand
 
-Before implementation begins:
+Before implementation begins, you MUST complete the "Understanding" section in the task file.
 
 Understand:
 
@@ -185,7 +185,9 @@ Business Outcome:
 Risk:
 ```
 
-Implementation should never begin before understanding exists.
+Implementation should never begin before this section is populated.
+
+**Note:** Explicit user approval of the Understanding phase is not required to move to Phase 3 (Explore) unless specifically requested.
 
 ---
 
@@ -504,6 +506,7 @@ The repository enforces a structured commit message format to ensure history rem
 - **build**: Dependencies, tooling, package, or infrastructure updates.
 - **arch**: Architectural changes or protocol updates.
 - **heal**: Selector repair or automation healing.
+- **map**: Mapping application structures or architectural discovery.
 
 ### Examples
 

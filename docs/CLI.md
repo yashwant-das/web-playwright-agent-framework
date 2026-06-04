@@ -12,7 +12,9 @@
 | `npm run task` | Open the interactive task menu. |
 | `npm run task create` | Launch the task creation wizard. |
 | `npm run task next` | Activate or resume the next eligible task. |
-| `npm run task <TASK_ID>` | Activate, verify, or re-verify one task. |
+| `npm run task status` | Show project task summary and board. |
+| `npm run task blocked` | List all tasks currently in BLOCKED state. |
+| `npm run task <TASK_ID>` | Activate, verify, or re-verify one specific task. |
 
 ## Interactive Menu
 

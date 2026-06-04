@@ -134,15 +134,22 @@ function getAllTasks(): TaskWithMeta[] {
         try {
             const content = fs.readFileSync(path.join(TASKS_DIR, f), 'utf8');
             const parsed = fm<Task>(content);
+            const attrs = parsed.attributes;
+
+            // Simple validation: Ensure id and title exist
+            if (!attrs.id || !attrs.title) {
+                log(`Warning: Task file ${f} is missing required metadata (id or title). Skipping.`);
+                continue;
+            }
+
             tasks.push({
-                ...parsed.attributes,
-                id: f.split('_')[0],
+                ...attrs,
                 file: f,
                 content,
             });
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : String(err);
-            log(`Failed to parse front-matter in task file tasks/${f}: ${msg}`);
+            log(`Warning: Failed to parse front-matter in task file tasks/${f}: ${msg}. Skipping.`);
         }
     }
     return tasks;
@@ -467,11 +474,27 @@ server.registerTool(
                 `[${taskId}] Verification FAILED. Status → BLOCKED\nError: ${message}`,
             );
 
+            // Read last 30 lines of the log for immediate AI feedback
+            let logExcerpt = '';
+            try {
+                const logContent = fs.readFileSync(LOG_FILE, 'utf8');
+                const logLines = logContent.split('\n');
+                logExcerpt = logLines.slice(-30).join('\n');
+            } catch {
+                logExcerpt = 'Could not retrieve last_run.log excerpt.';
+            }
+
             return errorResponse(
                 [
                     `Error: ${message}`,
                     '',
-                    `Task ${taskId} is now BLOCKED. Verification failed. Please read logs/last_run.log for full diagnostic output and fix the failing code or selectors. Once fixed, call verify_task again with taskId ${taskId}.`
+                    `Task ${taskId} is now BLOCKED. Verification failed.`,
+                    '',
+                    '--- Verification Log Excerpt (Last 30 lines) ---',
+                    logExcerpt,
+                    '--- End of Excerpt ---',
+                    '',
+                    'Please diagnose the failure based on the excerpt above or by reading logs/last_run.log for full output. Once fixed, call verify_task again.'
                 ].join('\n')
             );
         }
