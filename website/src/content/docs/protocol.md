@@ -3,7 +3,10 @@ title: Protocol
 description: The architectural source of truth for the Smart Playwright Protocol.
 ---
 
-# Architecture & Design Principles
+
+## Architecture & Design Principles
+
+---
 
 ## Vision
 
@@ -467,6 +470,152 @@ await expect(orderStatus).toContainText("Completed");
 ```
 
 Passing tests without meaningful business validation are considered low quality.
+
+---
+
+## CLI Responsibilities
+
+The CLI owns execution.
+
+Supported operations:
+
+```text
+Create Task
+Activate Task
+Verify Task
+Show Board
+Show Blocked Tasks 
+```
+
+---
+
+## Commit Conventions
+
+The repository enforces a structured commit message format to ensure history remains readable and compatible with automated tooling.
+
+### Format
+
+```text
+<type>(<optional-scope>): <subject>
+```
+
+### Supported Types
+
+- **feat**: New feature or capability.
+- **fix**: Bug fix or correction.
+- **refactor**: Code change that neither fixes a bug nor adds a feature.
+- **test**: Adding or updating tests.
+- **docs**: Documentation changes.
+- **chore**: Maintenance tasks, small cleanups.
+- **build**: Dependencies, tooling, package, or infrastructure updates.
+- **arch**: Architectural changes or protocol updates.
+- **heal**: Selector repair or automation healing.
+- **map**: Mapping application structures or architectural discovery.
+
+### Examples
+
+- `feat(cli): add task generator`
+- `fix(tasks): handle blocked task parsing`
+- `build(deps): upgrade playwright`
+- `heal(selectors): repair checkout locator`
+
+---
+
+## SPP v2 Scope
+
+### Included
+
+- **Smart Playwright Protocol**: The structured workflow (Understand -> Explore -> Plan -> Implement -> Verify -> Recover).
+- **Markdown Tasks**: File-backed units of work with metadata and status.
+- **Task CLI**: Operative tool for task management and verification.
+- **Quality Gates**: Automated enforcement of Playwright best practices.
+- **Playwright Integration**: Native support for Page Objects and spec verification.
+
+### Excluded
+
+- **Multi-Agent Systems**: SPP is designed for single-actor (Human or AI) task execution.
+- **Database Storage**: All state is stored in the filesystem.
+- **Autonomous Loops**: Verification and recovery require explicit actor triggers.
+- **Complex Integrations**: No native Jira, Slack, or CI dashboarding.
+
+---
+
+## Documentation Structure
+
+The framework maintains five primary documents.
+
+```text
+README.md
+PROTOCOL.md
+CLI.md
+ROADMAP.md
+AGENTS.md
+```
+
+Purpose:
+
+README.md
+
+- onboarding
+- quick start
+- installation
+
+PROTOCOL.md
+
+- architectural source of truth
+- workflow
+- states
+- rules
+- quality gates
+
+CLI.md
+
+- commands
+- troubleshooting
+- operational behavior
+
+ROADMAP.md
+
+- future enhancements
+- planned improvements
+
+AGENTS.md
+
+- lightweight instructions for AI assistants
+- references protocol
+
+---
+
+## Non-Goals
+
+SPP intentionally excludes:
+
+- Multi-agent orchestration
+- Autonomous execution loops
+- Memory systems
+- Vector databases
+- Knowledge graphs
+- Self-healing selectors
+- Jira integration
+- Complex workflow engines
+- Custom task databases
+
+The protocol favors simplicity over automation complexity.
+
+---
+
+## Success Criteria
+
+A task may move to DONE only when:
+
+- Acceptance criteria satisfied
+- Lint passes
+- Tests pass
+- Verification succeeds
+
+Verification remains the final authority.
+
+Code written without successful verification is not considered complete.
 
 ---
 
