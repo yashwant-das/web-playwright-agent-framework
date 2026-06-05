@@ -1,5 +1,6 @@
 # Smart Playwright Protocol (SPP)
 
+[![Documentation](https://img.shields.io/badge/Documentation-GitHub_Pages-blue?style=for-the-badge)](https://yashwant-das.github.io/test-playwright-protocol/)
 [![SPP](https://img.shields.io/badge/-SPP_v2.1.0-%232EAD33?style=for-the-badge)](https://github.com/yashwant-das/test-playwright-protocol)
 [![Release](https://img.shields.io/badge/-Release_v2.1.0-%23007ACC?style=for-the-badge)](https://github.com/yashwant-das/test-playwright-protocol/releases/tag/v2.1.0)
 [![Playwright](https://img.shields.io/badge/-playwright-%232EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev)
